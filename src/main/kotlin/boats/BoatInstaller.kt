@@ -1,6 +1,6 @@
 package boats
 
-import coords.CoordStringReader
+import coords.CSRBoats
 import coords.CoordStringTransformer
 
 class BoatInstaller(private val factory: BoatFactory) {
@@ -13,7 +13,7 @@ class BoatInstaller(private val factory: BoatFactory) {
             if (size < 4)
                 print("$num-й ")
             print("$size-палубный...\n")
-            val line = CoordStringReader().read().toString()
+            val line = CSRBoats().read().toString()
             val coordTransformed = CoordStringTransformer().transform(line)
             val coordBegin = coordTransformed.first
             val isVertical = coordTransformed.second
@@ -21,9 +21,10 @@ class BoatInstaller(private val factory: BoatFactory) {
             if (!factory.testBoat(boat))
                 println("Не корректные координаты")
         } while (!factory.testBoat(boat))
-        factory.techField.boatList.add(boat)
+        factory.techField.boatList.put(boat.id,boat)
         factory.techField.update()
-        factory.techField.uiField.update()
+        factory.techField.uiInstaller.update()
+        factory.techField.boatCounter++
         return boat
     }
 
@@ -31,10 +32,8 @@ class BoatInstaller(private val factory: BoatFactory) {
         val boatsIdToInstall = listOf(41, 31, 32, 21, 22, 23, 11, 12, 13, 14)
         for (id in boatsIdToInstall) {
             this.install(id)
-            factory.techField.print()
-            factory.techField.uiField.print()
-
+            factory.techField.uiInstaller.print()
         }
+        println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     }
-
 }

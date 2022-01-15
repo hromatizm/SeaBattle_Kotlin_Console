@@ -47,12 +47,12 @@ class BoatFactory(val techField: TechField) {
             return true
         for (coord in boat.coords) {
             for (boatOnField in techField.boatList) {
-                for (coordBF in boatOnField.coords) {
+                for (coordBF in boatOnField.value.coords) {
                     if (coord == coordBF)
                     return false
 
                 }
-                for (coordFrame in boatOnField.frame.coords) {
+                for (coordFrame in boatOnField.value.frame.coords) {
                     if (coord == coordFrame)
                     return false
                 }

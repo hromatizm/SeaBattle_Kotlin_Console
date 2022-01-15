@@ -1,6 +1,7 @@
 package fields
 
 import boats.Boat
+import coords.CoordInt
 
 class TechField {
 
@@ -22,8 +23,13 @@ class TechField {
    Остальные поля:
    1
     */
-    val uiField = UIField(this)
-    val boatList = mutableListOf<Boat>()
+    val uiInstaller = UIInstaller(this)
+    val uiTurns = UITurns(this)
+    val boatList = mutableMapOf<Int,Boat>()
+    var boatCounter = 0
+    val scoredList = mutableListOf<CoordInt>()
+    val mimoList = mutableListOf<CoordInt>()
+
     private val str0 = Array(12) { 1 }
     private val str1 = Array(12) { 1 }
     private val str2 = Array(12) { 1 }
@@ -37,7 +43,7 @@ class TechField {
     private val str10 = Array(12) { 1 }
     private val str11 = Array(12) { 1 }
 
-    private val fieldArray = arrayOf(
+    val fieldArray = arrayOf(
         str0,
         str1,
         str2,
@@ -73,14 +79,20 @@ class TechField {
 
     fun update() {
         for (boat in boatList) {
-            for (coord in boat.coords) {
-                fieldArray[coord.number][coord.letter] = boat.id
-            }
+            for (coord in boat.value.coords)
+                fieldArray[coord.number][coord.letter] = boat.value.id
         }
         for (boat in boatList) {
-            for (coord in boat.frame.coords) {
-                fieldArray[coord.number][coord.letter] = boat.id * 10
-            }
+            for (coord in boat.value.frame.coords)
+                fieldArray[coord.number][coord.letter] = boat.value.id * 10
+        }
+        for (coord in scoredList) {
+            if(fieldArray[coord.number][coord.letter] < 0)
+                continue
+            else fieldArray[coord.number][coord.letter] *=-1
+        }
+        for (coord in mimoList) {
+            fieldArray[coord.number][coord.letter] = 0
         }
     }
 }

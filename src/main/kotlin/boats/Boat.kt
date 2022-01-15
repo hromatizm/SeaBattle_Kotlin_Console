@@ -10,7 +10,7 @@ class Boat(val id: Int, val coordBegin: CoordInt, val isVertical: Boolean) {
     21, 22, 23 - двухпалубные корабли
     11, 12, 13, 14 - однопалубные корабли
  */
-    val size: Int = id.toString()[0].toString().toInt()
+val size: Int = id.toString()[0].toString().toInt()
     var lives: Int = size
     val coordEnd: CoordInt
     val coords = mutableListOf<CoordInt>()
@@ -30,7 +30,9 @@ class Boat(val id: Int, val coordBegin: CoordInt, val isVertical: Boolean) {
         }
         coordEnd = coords.last()
     }
-
+fun liveMinus (){
+    lives--
+}
     fun print() {
         for (coord in this.coords) {
             val l: Int = coord.letter
