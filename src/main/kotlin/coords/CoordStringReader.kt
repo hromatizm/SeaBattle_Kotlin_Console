@@ -1,17 +1,28 @@
 package coords
 
 abstract class CoordStringReader {
-    abstract val text : String
-    fun read(): String? {
-        val pattern = "_?[а-иА-ИкК]([1-9]|10)"
-        val pat = pattern.toRegex()
-        var line: String?
-        print(text)
-        do {
-            line = readLine()
-            val isMatch = line?.let { pat.matches(it) } as Boolean
+
+    abstract val text: String // Наследники отличаются только текстом приглашения ввести координату
+
+    // Читает строку, вводимую человеком в консоль и возвращеет пару:
+    // (1) координта корабля
+    // (2) признак вертикальности:
+    fun read(): Pair<Coordinate, Boolean> {
+        val pattern = "_?[а-иА-ИкК]([1-9]|10)" // Регулярное выражение для проверки вводимой координаты
+        val regex = pattern.toRegex()
+        var line: String
+        print(text) // Приглашение ввести координату
+        do { // Ввод из консоли пока ни будет соответствовать регулярному варыжению
+            line = readLine().toString()
+            val isMatch = line.let { regex.matches(it) }
             if (!isMatch) println("Не допустимые координаты. Попробуйте еще раз.")
         } while (!isMatch)
-        return line
+
+        // Если превый введенный символ НЕ "нижнее подчеркивание", то признак вертикальности корабля - true
+        val isVertical = line.first() != '_'
+        val coordString = CoordString(line.takeLast(2)) // Последние 2 символа преобразуем в CoordString
+        val coordInt = Coordinate(coordString) // CoordString преобразуем в числовую координату
+
+        return coordInt to isVertical
     }
 }

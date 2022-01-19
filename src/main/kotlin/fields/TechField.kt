@@ -1,8 +1,10 @@
 package fields
 
 import boats.Boat
-import coords.CoordInt
+import coords.Coordinate
 
+// Техническое поле боя, в котором храниться вся информация состоянии клеток на текущий момент игры.
+// На его основе печается UI поле.
 class TechField {
 
     /*
@@ -23,43 +25,32 @@ class TechField {
    Остальные поля:
    1
     */
-    val uiInstaller = UIInstaller(this)
-    val uiTurns = UITurns(this)
-    val boatList = mutableMapOf<Int,Boat>()
-    var boatCounter = 0
-    val scoredList = mutableListOf<CoordInt>()
-    val mimoList = mutableListOf<CoordInt>()
+    // UI поле боя для расстановки своих кораблей:
+    val uiInstaller = UIFInstaller(this)
 
-    private val str0 = Array(12) { 1 }
-    private val str1 = Array(12) { 1 }
-    private val str2 = Array(12) { 1 }
-    private val str3 = Array(12) { 1 }
-    private val str4 = Array(12) { 1 }
-    private val str5 = Array(12) { 1 }
-    private val str6 = Array(12) { 1 }
-    private val str7 = Array(12) { 1 }
-    private val str8 = Array(12) { 1 }
-    private val str9 = Array(12) { 1 }
-    private val str10 = Array(12) { 1 }
-    private val str11 = Array(12) { 1 }
+    // UI поле боя для выбивания кораблей соперником:
+    val uiTurns = UIFTurns(this)
 
-    val fieldArray = arrayOf(
-        str0,
-        str1,
-        str2,
-        str3,
-        str4,
-        str5,
-        str6,
-        str7,
-        str8,
-        str9,
-        str10,
-        str11,
-    )
-    private val strLetters = arrayOf("_", "_", "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К", "_", "_")
+    // Коллекция кораблей с достпом по ключу - ID корабля:
+    val boatList = mutableMapOf<Int, Boat>()
+
+    // Счетчик не сбитых кораблей (для фиксации конца игры):
+    var aliveBoatCounter = 0
+
+    // Коллекция коодиннат в которых стоят сбитые клетки кораблей:
+    val scoredList = mutableListOf<Coordinate>()
+
+    // Коллекция коодиннат куда стреляли, но "мимо":
+    val failList = mutableListOf<Coordinate>()
+
+    // Тех поле 12 на 12 изначально заполенено кодом 1:
+    val fieldArray = Array(12, { Array(12, { 1 }) })
+
+    // 2 Верхняие строки техполя с номерами колонок и буквами (для печати техполя на время отладки)
     private val strIndex = arrayOf("_", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "_")
+    private val strLetters = arrayOf("_", "_", "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К", "_", "_")
 
+    // Вывод техполя в консоль (для отладки):
     fun print() {
         for (item in strIndex)
             print("%-4s".format(item))
@@ -77,21 +68,22 @@ class TechField {
         println()
     }
 
+    // Обновление кодов техполя (после действия игрока):
     fun update() {
         for (boat in boatList) {
-            for (coord in boat.value.coords)
+            for (coord in boat.value.coordinates) // Клетки, где корабли
                 fieldArray[coord.number][coord.letter] = boat.value.id
         }
         for (boat in boatList) {
-            for (coord in boat.value.frame.coords)
+            for (coord in boat.value.frame) // Клетки, где рамки вокруг кораблей
                 fieldArray[coord.number][coord.letter] = boat.value.id * 10
         }
-        for (coord in scoredList) {
-            if(fieldArray[coord.number][coord.letter] < 0)
+        for (coord in scoredList) { // Клетки, со сбитыми кораблями
+            if (fieldArray[coord.number][coord.letter] < 0)
                 continue
-            else fieldArray[coord.number][coord.letter] *=-1
+            else fieldArray[coord.number][coord.letter] *= -1
         }
-        for (coord in mimoList) {
+        for (coord in failList) { // Клетки, куда стреляли, но "мимо"
             fieldArray[coord.number][coord.letter] = 0
         }
     }
