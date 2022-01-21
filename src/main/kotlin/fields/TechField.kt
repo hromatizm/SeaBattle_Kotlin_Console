@@ -1,11 +1,12 @@
 package fields
 
 import boats.Boat
-import coords.Coordinate
+import com.google.gson.Gson
+import coordinates.Coordinate
 
 // Техническое поле боя, в котором храниться вся информация состоянии клеток на текущий момент игры.
 // На его основе печается UI поле.
-class TechField {
+open class TechField {
 
     /*
    Коды технического поля сражения:
@@ -31,24 +32,39 @@ class TechField {
     // UI поле боя для выбивания кораблей соперником:
     val uiTurns = UIFTurns(this)
 
-    // Коллекция кораблей с достпом по ключу - ID корабля:
-    val boatList = mutableMapOf<Int, Boat>()
+    // Коллекция кораблей с доступом по ключу - ID корабля:
+    open var boatList = mutableMapOf<Int, Boat>()
 
     // Счетчик не сбитых кораблей (для фиксации конца игры):
     var aliveBoatCounter = 0
 
     // Коллекция коодиннат в которых стоят сбитые клетки кораблей:
-    val scoredList = mutableListOf<Coordinate>()
+    open var scoredList = arrayListOf<Coordinate>()
 
     // Коллекция коодиннат куда стреляли, но "мимо":
-    val failList = mutableListOf<Coordinate>()
+    open var failList = arrayListOf<Coordinate>()
 
     // Тех поле 12 на 12 изначально заполенено кодом 1:
-    val fieldArray = Array(12, { Array(12, { 1 }) })
+    var fieldArray = Array(12, { Array(12, { 1 }) })
 
     // 2 Верхняие строки техполя с номерами колонок и буквами (для печати техполя на время отладки)
     private val strIndex = arrayOf("_", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "_")
     private val strLetters = arrayOf("_", "_", "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К", "_", "_")
+
+    // Очищение поля, чтобы можно было вибивать заново с чистого листа ту же расстоновку кораблей
+    fun clearField (){
+        fieldArray = Array(12, { Array(12, { 1 }) }) // Инициализируем начальным состоянием
+        aliveBoatCounter = boatList.size // Восстанавливаем счетчик живых кораблей
+        scoredList.clear() // Очищаем список сбитых
+        failList.clear() // Очищаем список "мимо"
+        for (boat in boatList.values) // Восстанавливаем жизини всех кораблей
+            boat.lives = boat.size
+        uiInstaller.clear() // Очищаем интерфейс для установки кораблей
+        uiTurns.clear() // Очищаем интерфейс для выбивания кораблей
+        update() // Обнавляем ТехПоле (переносим коды из коллекций в основной массив fieldArray
+        uiTurns.update()  // Обновляем интерфейс для установки кораблей (чтобы выводил чистое поле)
+        uiInstaller.update() // Обновляем интерфейс для выбивания кораблей (чтобы выводил чистое поле)
+    }
 
     // Вывод техполя в консоль (для отладки):
     fun print() {
@@ -72,11 +88,11 @@ class TechField {
     fun update() {
         for (boat in boatList) {
             for (coord in boat.value.coordinates) // Клетки, где корабли
-                fieldArray[coord.number][coord.letter] = boat.value.id
+                fieldArray[coord!!.number][coord!!.letter] = boat.value.id
         }
         for (boat in boatList) {
             for (coord in boat.value.frame) // Клетки, где рамки вокруг кораблей
-                fieldArray[coord.number][coord.letter] = boat.value.id * 10
+                fieldArray[coord!!.number][coord.letter] = boat.value.id * 10
         }
         for (coord in scoredList) { // Клетки, со сбитыми кораблями
             if (fieldArray[coord.number][coord.letter] < 0)

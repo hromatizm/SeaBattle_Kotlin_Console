@@ -1,4 +1,4 @@
-package coords
+package coordinates
 
 // Временно хранит координату в строковом формате (после ввода человеком из консоли)
 data class CoordString(val value: String) {

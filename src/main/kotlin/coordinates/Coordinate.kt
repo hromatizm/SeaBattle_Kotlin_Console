@@ -1,17 +1,19 @@
-package coords
+package coordinates
 
 // Числовая координата клетки:
 class Coordinate {
     val letter: Int // Буквенная часть
-    val number: Int // Цеферная часть
+    val number: Int // Циферная часть
     val value: Pair<Int, Int>
+
 
     // Конструктор для действий робота принимает 2 числа
     constructor(letter: Int, number: Int) {
         this.letter = letter
         this.number = number
         this.value = letter to number
-    }
+
+      }
 
     // Конструктор для действий человека принимает координату в строковом формате
     constructor(coordString: CoordString) {
@@ -34,6 +36,7 @@ class Coordinate {
         }
         this.number = coordString.number.toInt() // Числовую часть преводит из String в Int
         this.value = letter to number
+
     }
 
     // Переопределяем фукцию для сравнения двух координат.
@@ -41,12 +44,8 @@ class Coordinate {
     override fun equals(other: Any?): Boolean {
         if (other == null || other !is Coordinate)
             return false
-        return value == other.value
+        return (value.first == other.value.first && value.second == other.value.second)
     }
 
-    override fun hashCode(): Int {
-        var result = letter
-        result = 31 * result + number
-        return result
-    }
+
 }

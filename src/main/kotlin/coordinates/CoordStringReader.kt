@@ -1,4 +1,4 @@
-package coords
+package coordinates
 
 abstract class CoordStringReader {
 
@@ -20,7 +20,7 @@ abstract class CoordStringReader {
 
         // Если превый введенный символ НЕ "нижнее подчеркивание", то признак вертикальности корабля - true
         val isVertical = line.first() != '_'
-        val coordString = CoordString(line.takeLast(2)) // Последние 2 символа преобразуем в CoordString
+        val coordString = CoordString(line.replace("_","")) // Убираем "_" из строки
         val coordInt = Coordinate(coordString) // CoordString преобразуем в числовую координату
 
         return coordInt to isVertical

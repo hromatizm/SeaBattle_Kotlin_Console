@@ -17,13 +17,17 @@ abstract class UIField(private val techField: TechField) {
     val reset = "\u001b[0m"
 
     // UI поле 10 на 10 изначально заполенено кодом 1:
-    val fieldArray = Array(10, { Array(10, { blancChar }) })
+    var fieldArray = Array(10, { Array(10, { blancChar }) })
 
     // Верхняя строка с буквами:
     private val strLetters = arrayOf("    ", "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К")
 
     // Обновление содержимого (значков) клеток UI поля (после действия игрока):
     abstract fun update()
+
+    fun clear() {
+        fieldArray = Array(10, { Array(10, { blancChar }) })
+    }
 
     // Вывод в консоль UI поля
     fun print() {

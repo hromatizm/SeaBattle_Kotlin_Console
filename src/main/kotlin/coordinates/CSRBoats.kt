@@ -1,4 +1,4 @@
-package coords
+package coordinates
 
 // Наследник CoordStringReader. Для ввода координат кораблей
 class CSRBoats : CoordStringReader() {

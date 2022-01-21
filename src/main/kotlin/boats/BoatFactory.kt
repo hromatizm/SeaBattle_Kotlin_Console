@@ -1,6 +1,6 @@
 package boats
 
-import coords.Coordinate
+import coordinates.Coordinate
 import fields.TechField
 
 // Фабрика создания корабля
@@ -27,22 +27,22 @@ class BoatFactory(val techField: TechField) {
             // Самая верхняя числовая координата рамки находится на 1 выше корабля:
             val frameTopNumber = boat.coordBegin.number - 1
             // Добавляем клетку над кораблем:
-            boat.frame.add(Coordinate(boat.coordBegin.letter, frameTopNumber))
+            boat.frame[0] = Coordinate(boat.coordBegin.letter, frameTopNumber)
             // Добавляем клетку под кораблем:
-            boat.frame.add(Coordinate(boat.coordEnd.letter, frameTopNumber + frameSize - 1))
+            boat.frame[1] = Coordinate(boat.coordEnd.letter, frameTopNumber + frameSize - 1)
             // Добавляем 2 полоски клеток (справа и слева от корабля):
             for (number in 0 until frameSize) {
-                boat.frame.add(Coordinate(boat.coordBegin.letter - 1, frameTopNumber + number))
-                boat.frame.add(Coordinate(boat.coordBegin.letter + 1, frameTopNumber + number))
+                boat.frame[number + 2] = Coordinate(boat.coordBegin.letter - 1, frameTopNumber + number)
+                boat.frame[number + 2 + frameSize] = Coordinate(boat.coordBegin.letter + 1, frameTopNumber + number)
             }
         } else { // Если корабль горизонтальный, то рамка будет горизонтальная
             // Самая левая буквенная координата рамки находится на 1 левеее корабля:
             val frameLeftLetter = boat.coordBegin.letter - 1
-            boat.frame.add(Coordinate(frameLeftLetter, boat.coordBegin.number))
-            boat.frame.add(Coordinate(frameLeftLetter + frameSize - 1, boat.coordEnd.number))
+            boat.frame[0] = Coordinate(frameLeftLetter, boat.coordBegin.number)
+            boat.frame[1] = Coordinate(frameLeftLetter + frameSize - 1, boat.coordEnd.number)
             for (number in 0 until frameSize) {
-                boat.frame.add(Coordinate(frameLeftLetter + number, boat.coordBegin.number - 1))
-                boat.frame.add(Coordinate(frameLeftLetter + number, boat.coordBegin.number + 1))
+                boat.frame[number + 2] = Coordinate(frameLeftLetter + number, boat.coordBegin.number - 1)
+                boat.frame[number + 2 + frameSize] = Coordinate(frameLeftLetter + number, boat.coordBegin.number + 1)
             }
         }
     }

@@ -1,4 +1,4 @@
-package coords
+package coordinates
 
 // Наследник CoordStringReader. Для ввода координат выстрелов
 class CSRTurn : CoordStringReader() {
