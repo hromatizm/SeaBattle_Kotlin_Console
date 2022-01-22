@@ -11,10 +11,10 @@ class Boat(val id: Int, val coordBegin: Coordinate, val isVertical: Boolean) {
         11, 12, 13, 14 - однопалубные корабли
      */
     // Размер корабля - первая цифра id:
-    open val size: Int = id.toString()[0].toString().toInt()
+    val size: Int = id.toString()[0].toString().toInt()
 
     // Кол-во "жизней" корабля, для фиксации состояния "убит":
-    open var lives: Int = size
+    var lives: Int = size
 
     // Координата конца корабля нужна для проверки, что корабль не выходит за пределы поля:
     val coordEnd: Coordinate

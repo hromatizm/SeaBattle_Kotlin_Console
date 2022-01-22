@@ -3,7 +3,7 @@ package fields
 import boats.Boat
 import coordinates.Coordinate
 
-class TechFieldForAlgoritm() : TechField() {
+class TechField4Algorithm() : TechField() {
     constructor(
         scoredList: ArrayList<Coordinate>,
         failList: ArrayList<Coordinate>,

@@ -4,7 +4,7 @@ import boats.Boat
 import boats.BoatFactory
 import boats.BoatInstaller
 import fields.TechField
-import fields.TechFieldForAlgoritm
+import fields.TechField4Algorithm
 import kotlin.random.Random
 
 // Получение координаты для утановки корабля или хода:
@@ -33,7 +33,7 @@ class GetCoord {
     }
 
     fun turnRobot(tF: TechField): Coordinate {
-        val techField = TechFieldForAlgoritm( // Создаем копию ТехПоля, чтобы не менять оригинал
+        val techField = TechField4Algorithm( // Создаем копию ТехПоля, чтобы не менять оригинал
             tF.scoredList,
             tF.failList,
             tF.boatList
@@ -45,7 +45,7 @@ class GetCoord {
             damagedBoat = techField.boatList.values.find { it.lives != 0 && it.lives < it.size }!!
             val damagedCoords = arrayListOf<Coordinate>()
             for (coord in damagedBoat.coordinates) // Находим сбитые клетки корабля
-                if (tF.fieldArray[coord?.number!!][coord?.letter] == damagedBoat.id * (-1))
+                if (tF.fieldArray[coord?.number!!][coord.letter] == damagedBoat.id * (-1))
                     damagedCoords.add(coord)
 
             // Ищем координаты в которых возможно нахождение остальной части корабля:
@@ -65,7 +65,6 @@ class GetCoord {
                     add(Coordinate(damagedCoords.last().letter, damagedCoords.last().number + 1))
                 }
             } else {
-                println("damagedCoords.size=${damagedCoords.size}")
                 with(potentialCords) {
                     damagedCoords.sortedBy { it.number }
                     add(Coordinate(damagedCoords[0].letter - 1, damagedCoords[0].number))
@@ -108,9 +107,9 @@ class GetCoord {
                 techField.boatList.clear()
                 techField.uiInstaller.clear()
                 for (id in longestBoatsIdList) {
-                    var testBoatPair =
+                    val testBoatPair =
                         installer.install(id) // Установщик возвращает пару: корабль и булеан (результат проверки)
-                    var isTestBoatOk = testBoatPair.first
+                    val isTestBoatOk = testBoatPair.first
                     if (!isTestBoatOk) // Если проверка пройдена не успешно
                         continue // то эта неудачная итерация пропускается
                     techField.boatList[id] = testBoatPair.second
@@ -119,7 +118,7 @@ class GetCoord {
 
             var installedCoords = arrayOf<Coordinate?>() // Список координат расставленных кораблей
             for (boat in techField.boatList)
-                installedCoords = installedCoords + boat.value.coordinates
+                installedCoords += boat.value.coordinates
             for (coord in installedCoords) {
                 val existKey: Coordinate?
 
@@ -132,7 +131,7 @@ class GetCoord {
         val mostFrequentCord = // Координата, которая встречается в мапе чаще всех, ее и возвращаем
             installedCoordsMap.filterValues { coord -> coord == installedCoordsMap.maxByOrNull { it.value }?.value }
                 .map { it.key }[0]
-        println("${mostFrequentCord?.letter}${mostFrequentCord?.number}")
+        println(mostFrequentCord?.toCoordString().toString())
         return mostFrequentCord!!
     }
 }

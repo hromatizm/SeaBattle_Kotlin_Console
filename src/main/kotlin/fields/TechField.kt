@@ -1,7 +1,6 @@
 package fields
 
 import boats.Boat
-import com.google.gson.Gson
 import coordinates.Coordinate
 
 // Техническое поле боя, в котором храниться вся информация состоянии клеток на текущий момент игры.
@@ -26,6 +25,7 @@ open class TechField {
    Остальные поля:
    1
     */
+
     // UI поле боя для расстановки своих кораблей:
     val uiInstaller = UIFInstaller(this)
 
@@ -44,16 +44,72 @@ open class TechField {
     // Коллекция коодиннат куда стреляли, но "мимо":
     open var failList = arrayListOf<Coordinate>()
 
+    open var lastTurnCoord: Coordinate? = null
+
     // Тех поле 12 на 12 изначально заполенено кодом 1:
-    var fieldArray = Array(12, { Array(12, { 1 }) })
+    var fieldArray = Array(12) { Array(12) { 1 } }
 
     // 2 Верхняие строки техполя с номерами колонок и буквами (для печати техполя на время отладки)
     private val strIndex = arrayOf("_", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "_")
     private val strLetters = arrayOf("_", "_", "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К", "_", "_")
 
+    companion object {
+        var uiScene = arrayListOf<UIFTurns>()
+        fun printUI() {
+
+            for (uiNum in 0 until uiScene.size) {
+                for (item in uiScene[uiNum].strLetters) // Верхняя строка с буквами
+                    print("%-3s".format(item))
+            }
+            println()
+            for (strNum in 0 until 10) {
+                for (uiNum in 0 until uiScene.size) {
+                    print("%-3s".format(strNum + 1)) // Левый столбец с цифрами
+                    var letter = 1
+                    for (item in uiScene[uiNum].fieldArray[strNum]) {
+                        val currentCoord = Coordinate(letter, strNum + 1)
+                        val isLastTurnCoord =
+                            uiScene[uiNum].techField.lastTurnCoord?.let { it == currentCoord } ?: false
+                        when (item) {
+                            uiScene[uiNum].boatChar -> // Корабли
+                                if (isLastTurnCoord) {
+                                    print(uiScene[uiNum].violet + "%s".format(item) + uiScene[uiNum].reset)
+                                } else
+                                    print("%s".format(item))
+                            uiScene[uiNum].deadChar -> // Сбитые корабли
+                                if (isLastTurnCoord) {
+                                    print(uiScene[uiNum].violet + "%s".format(item) + uiScene[uiNum].reset)
+                                } else
+                                    print(uiScene[uiNum].red + "%s".format(item) + uiScene[uiNum].reset)
+                            uiScene[uiNum].failChar -> // Стреляли "мимо"
+                                if (isLastTurnCoord) {
+                                    print(uiScene[uiNum].violet + " %-2s".format(item) + uiScene[uiNum].reset)
+                                } else
+                                    print(" %-2s".format(item))
+                            else -> print(uiScene[uiNum].blue + " %-2s".format(item) + uiScene[uiNum].reset) // Остальное - пустые клетки
+                        }
+                        letter++
+                    }
+                    print(" %-3s".format(strNum + 1)) // Дублируем с права столбец с цифрами
+                }
+                println()
+            }
+            for (uiNum in 0 until uiScene.size) {
+                for (item in uiScene[uiNum].strLetters) // Дублируем снизу строку с буквами
+                    print("%-3s".format(item))
+            }
+            println()
+        }
+    }
+
+    init {
+        if (this !is TechField4Algorithm)
+            uiScene.add(uiTurns)
+    }
+
     // Очищение поля, чтобы можно было вибивать заново с чистого листа ту же расстоновку кораблей
-    fun clearField (){
-        fieldArray = Array(12, { Array(12, { 1 }) }) // Инициализируем начальным состоянием
+    fun clearField() {
+        fieldArray = Array(12) { Array(12) { 1 } } // Инициализируем начальным состоянием
         aliveBoatCounter = boatList.size // Восстанавливаем счетчик живых кораблей
         scoredList.clear() // Очищаем список сбитых
         failList.clear() // Очищаем список "мимо"
@@ -88,7 +144,7 @@ open class TechField {
     fun update() {
         for (boat in boatList) {
             for (coord in boat.value.coordinates) // Клетки, где корабли
-                fieldArray[coord!!.number][coord!!.letter] = boat.value.id
+                fieldArray[coord!!.number][coord.letter] = boat.value.id
         }
         for (boat in boatList) {
             for (coord in boat.value.frame) // Клетки, где рамки вокруг кораблей

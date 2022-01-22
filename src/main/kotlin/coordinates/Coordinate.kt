@@ -13,7 +13,7 @@ class Coordinate {
         this.number = number
         this.value = letter to number
 
-      }
+    }
 
     // Конструктор для действий человека принимает координату в строковом формате
     constructor(coordString: CoordString) {
@@ -47,5 +47,24 @@ class Coordinate {
         return (value.first == other.value.first && value.second == other.value.second)
     }
 
-
+    fun toCoordString(): CoordString {
+        val letter = when { // Преобразует букву в число
+            (this.letter == 1) -> "А"
+            (this.letter == 2) -> "Б"
+            (this.letter == 3) -> "В"
+            (this.letter == 4) -> "Г"
+            (this.letter == 5) -> "Д"
+            (this.letter == 6) -> "Е"
+            (this.letter == 7) -> "Ж"
+            (this.letter == 8) -> "З"
+            (this.letter == 9) -> "И"
+            (this.letter == 10) -> "К"
+            else -> {
+                println("Wrong String Coords Letter")
+                0
+            }
+        }
+        val number = this.number.toString()
+        return CoordString("$letter$number")
+    }
 }

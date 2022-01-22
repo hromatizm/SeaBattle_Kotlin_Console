@@ -1,18 +1,16 @@
 package turns
 
-import coordinates.Coordinate
 import coordinates.GetCoord
 import fields.TechField
-import kotlin.system.exitProcess
 
 // Осуществляет ходы
 class Turn(var techField: TechField, var isHuman: Boolean) {
 
-     var counter = 0 // Счетчик ходов
+    var counter = 0 // Счетчик ходов
 
     fun makeTurn(): Pair<Boolean, Int> { // true - игра продложается
         counter++
-        println("Ход № $counter")
+        println("\nХод № $counter")
         var isScored = false // Признак, что "попал" в корабль
         val turnCoord =
             if (isHuman) GetCoord().turnHuman() else GetCoord().turnRobot(techField) // Получаем координату хода
@@ -29,10 +27,13 @@ class Turn(var techField: TechField, var isHuman: Boolean) {
                         techField.failList.add(coord!!)
                     techField.aliveBoatCounter-- // Декремент счетчика живых кораблей
                     if (techField.aliveBoatCounter == 0) { // Если живых кораблей не осталось
-                        with(techField) { // перерисовываем интерфейс
+                        with(techField) {
                             update()
-                            uiTurns.update()
-                            uiTurns.print()
+                            lastTurnCoord = turnCoord
+                            for (ui in TechField.uiScene) {
+                                ui.update()
+                            }
+                            TechField.printUI()
                         }
                         println(
                             """
@@ -58,8 +59,11 @@ class Turn(var techField: TechField, var isHuman: Boolean) {
         // В конце попытки хода перерисовываем интерфейс
         with(techField) {
             update()
-            uiTurns.update()
-            uiTurns.print()
+            lastTurnCoord = turnCoord
+            for (ui in TechField.uiScene) {
+                ui.update()
+            }
+            TechField.printUI()
         }
         // Если "попал" и остались живые корабли
         if (isScored && techField.aliveBoatCounter > 0) {

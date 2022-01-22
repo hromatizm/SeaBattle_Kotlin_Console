@@ -8,6 +8,6 @@ class UIFInstaller(val techField: TechField) : UIField(techField) {
     override fun update() {
         for (boat in techField.boatList) // Перебираем коллекцию кораблей из ТехПоля
             for (coord in boat.value.coordinates)
-                fieldArray[coord!!.number - 1][coord!!.letter - 1] = boatChar // И в UI поле добавляем значек
+                fieldArray[coord!!.number - 1][coord.letter - 1] = boatChar // И в UI поле добавляем значек
     }
 }

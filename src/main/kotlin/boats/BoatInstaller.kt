@@ -1,7 +1,7 @@
 package boats
 
 import coordinates.GetCoord
-import fields.TechFieldForAlgoritm
+import fields.TechField4Algorithm
 
 // Расстановщик кораблей на поле
 class BoatInstaller(private val factory: BoatFactory, private val isHuman: Boolean) {
@@ -59,7 +59,7 @@ class BoatInstaller(private val factory: BoatFactory, private val isHuman: Boole
         }
         for (i in 1..50) // Печатаем пустые строки, чтобы "очистить" консоль
             println("\n")
-    }
+        }
 
     // Проверка - может ли корабль с такими координатами корректно стоять на поле:
     fun testBoat(boat: Boat): Boolean {
@@ -67,7 +67,7 @@ class BoatInstaller(private val factory: BoatFactory, private val isHuman: Boole
             return false
         }
 
-        if (!(techField is TechFieldForAlgoritm) && techField.boatList.size == 0) // Если ставиться первый корабль, то ОК.
+        if (techField !is TechField4Algorithm && techField.boatList.isEmpty()) // Если ставиться первый корабль, то ОК.
             return true
 
         for (coord in boat.coordinates) {  // Координаты корбля
